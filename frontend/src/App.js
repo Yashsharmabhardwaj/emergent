@@ -1,31 +1,92 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { Toaster } from "./components/ui/toaster";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+// Pages
 import Home from "./pages/Home";
 import Features from "./pages/Features";
 import Pricing from "./pages/Pricing";
 import FAQs from "./pages/FAQs";
 import Enterprise from "./pages/Enterprise";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+
+function AppContent() {
+  const { isAuthenticated } = useAuth();
+
+  return (
+    <div className="App">
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={
+          <>
+            <Navbar />
+            <Home />
+            <Footer />
+          </>
+        } />
+        <Route path="/features" element={
+          <>
+            <Navbar />
+            <Features />
+            <Footer />
+          </>
+        } />
+        <Route path="/pricing" element={
+          <>
+            <Navbar />
+            <Pricing />
+            <Footer />
+          </>
+        } />
+        <Route path="/faqs" element={
+          <>
+            <Navbar />
+            <FAQs />
+            <Footer />
+          </>
+        } />
+        <Route path="/enterprise" element={
+          <>
+            <Navbar />
+            <Enterprise />
+            <Footer />
+          </>
+        } />
+        
+        {/* Auth routes */}
+        <Route path="/login" element={
+          isAuthenticated ? <Navigate to="/dashboard" /> : <Login />
+        } />
+        <Route path="/register" element={
+          isAuthenticated ? <Navigate to="/dashboard" /> : <Register />
+        } />
+        
+        {/* Protected routes */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+      </Routes>
+      <Toaster />
+    </div>
+  );
+}
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/faqs" element={<FAQs />} />
-          <Route path="/enterprise" element={<Enterprise />} />
-        </Routes>
-        <Footer />
-        <Toaster />
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

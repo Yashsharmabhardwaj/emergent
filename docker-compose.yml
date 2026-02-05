@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: emergent_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: emergent_db
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - emergent_network
+
+  backend:
+    build: ./backend
+    container_name: emergent_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      MONGO_URL: mongodb://admin:password123@mongodb:27017/emergent_db?authSource=admin
+      DB_NAME: emergent_db
+      CORS_ORIGINS: http://localhost:3000
+      JWT_SECRET: your-secret-key-change-in-production
+    depends_on:
+      - mongodb
+    networks:
+      - emergent_network
+
+volumes:
+  mongodb_data:
+
+networks:
+  emergent_network:
+    driver: bridge
