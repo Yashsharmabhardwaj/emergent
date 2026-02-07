@@ -15,7 +15,11 @@ import FAQs from "./pages/FAQs";
 import Enterprise from "./pages/Enterprise";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/DashboardNew";
+import Settings from "./pages/Settings";
+import Profile from "./pages/Profile";
+import History from "./pages/History";
+import NotFound from "./pages/NotFound";
 
 function AppContent() {
   const { isAuthenticated } = useAuth();
@@ -74,6 +78,24 @@ function AppContent() {
             <Dashboard />
           </ProtectedRoute>
         } />
+        <Route path="/settings" element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        } />
+        <Route path="/history" element={
+          <ProtectedRoute>
+            <History />
+          </ProtectedRoute>
+        } />
+        
+        {/* 404 Route */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
     </div>
