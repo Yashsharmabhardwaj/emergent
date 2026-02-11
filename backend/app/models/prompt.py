@@ -28,6 +28,8 @@ class PromptInDB(PromptBase):
     conversation_id: Optional[str] = None
     phase: Optional[str] = None  # "discovery" | "plan"
     response: Optional[str] = None
+    is_pinned: bool = False
+    is_archived: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -40,6 +42,8 @@ class PromptResponse(BaseModel):
     conversation_id: Optional[str] = None
     phase: Optional[str] = None
     response: Optional[str]
+    is_pinned: bool = False
+    is_archived: bool = False
     created_at: datetime
     updated_at: datetime
 

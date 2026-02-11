@@ -127,7 +127,7 @@ async def list_conversations(
 ):
     """
     List user's conversations (grouped by conversation_id).
-    Returns [{ id, title, preview, updated_at, message_count }].
+    Returns [{ id, title, preview, updated_at, message_count, is_pinned, is_archived }].
     """
     pipeline = [
         {"$match": {"user_id": current_user["id"], "conversation_id": {"$exists": True, "$ne": None}}},
@@ -139,6 +139,8 @@ async def list_conversations(
                 "preview": {"$last": "$content"}, # Preview last message? Or first? usually last is better for "recent"
                 "updated_at": {"$max": "$updated_at"},
                 "message_count": {"$sum": 1},
+                "is_pinned": {"$first": "$is_pinned"},
+                "is_archived": {"$first": "$is_archived"},
             }
         },
         {"$sort": {"updated_at": -1}},
@@ -159,6 +161,8 @@ async def list_conversations(
             "preview": preview,
             "updated_at": doc.get("updated_at"),
             "message_count": doc.get("message_count", 0),
+            "is_pinned": doc.get("is_pinned", False),
+            "is_archived": doc.get("is_archived", False),
         })
     return conversations
 
@@ -166,26 +170,43 @@ async def list_conversations(
 @router.patch("/conversations/{conversation_id}")
 async def update_conversation_title(
     conversation_id: str,
-    update_data: dict,  # Expect {"title": "New Title"}
+    update_data: dict,  # Expect {"title": "New Title"} and/or {"is_pinned": true} and/or {"is_archived": false}
     current_user: dict = Depends(get_current_user),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
-    Update a conversation's title.
-    Because we store title on Prompt documents, this updates all prompts in the conversation 
+    Update a conversation's title, pin status, or archive status.
+    Because we store these fields on Prompt documents, this updates all prompts in the conversation 
     to ensure consistency for the aggregation pipeline.
     """
-    new_title = update_data.get("title")
-    if not new_title:
+    # Build update dict from provided fields
+    update_fields = {}
+    
+    if "title" in update_data:
+        new_title = update_data.get("title")
+        if not new_title:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Title cannot be empty"
+            )
+        update_fields["title"] = new_title
+    
+    if "is_pinned" in update_data:
+        update_fields["is_pinned"] = bool(update_data.get("is_pinned"))
+    
+    if "is_archived" in update_data:
+        update_fields["is_archived"] = bool(update_data.get("is_archived"))
+    
+    if not update_fields:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Title is required"
+            detail="No valid fields to update"
         )
-        
+    
     # Update all prompts in this conversation for this user
     result = await db[COLLECTION_PROMPTS].update_many(
         {"conversation_id": conversation_id, "user_id": current_user["id"]},
-        {"$set": {"title": new_title}}
+        {"$set": update_fields}
     )
     
     if result.matched_count == 0:
