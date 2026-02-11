@@ -35,7 +35,7 @@ const ChatInput = ({ value, onChange, onSubmit, loading, placeholder }) => {
           value={value}
           onChange={onChange}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder || "Type your message here... (Press Enter to send, Shift+Enter for new line)"}
+          placeholder={loading ? "AI is responding..." : (placeholder || "Type your message here... (Press Enter to send, Shift+Enter for new line)")}
           disabled={loading}
           className={cn(
             "min-h-[50px] max-h-[200px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent",
@@ -52,7 +52,8 @@ const ChatInput = ({ value, onChange, onSubmit, loading, placeholder }) => {
           className={cn(
             "flex-shrink-0 h-10 w-10 rounded-xl",
             "bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700",
-            "transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            "transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed",
+            loading && "animate-pulse"
           )}
         >
           {loading ? (

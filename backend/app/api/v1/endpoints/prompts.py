@@ -36,6 +36,7 @@ async def _get_conversation_history(
     return history
 
 
+
 @router.post("", response_model=PromptResponse, status_code=status.HTTP_201_CREATED)
 @router.post("/", response_model=PromptResponse, status_code=status.HTTP_201_CREATED)
 async def create_prompt(
@@ -48,6 +49,12 @@ async def create_prompt(
     Pass conversation_id to continue an existing conversation (multi-turn).
     """
     conversation_id = prompt_data.conversation_id or str(uuid.uuid4())
+    
+    # Simple default title generation for new conversation
+    title = None
+    if not prompt_data.conversation_id:
+        # Use first 50 chars of content
+        title = prompt_data.content[:50] + ("..." if len(prompt_data.content) > 50 else "")
 
     # Build conversation history for multi-turn
     history = []
@@ -73,11 +80,11 @@ async def create_prompt(
         conversation_id=conversation_id,
         phase=phase,
         response=response_text,
+        title=title,
     )
 
     prompt_dict = prepare_for_db(prompt.model_dump())
     await db[COLLECTION_PROMPTS].insert_one(prompt_dict)
-
     return PromptResponse(**prompt.model_dump())
 
 
@@ -120,15 +127,16 @@ async def list_conversations(
 ):
     """
     List user's conversations (grouped by conversation_id).
-    Returns [{ id, preview, updated_at, message_count }].
+    Returns [{ id, title, preview, updated_at, message_count }].
     """
     pipeline = [
         {"$match": {"user_id": current_user["id"], "conversation_id": {"$exists": True, "$ne": None}}},
-        {"$sort": {"updated_at": -1}},
+        {"$sort": {"created_at": 1}}, # Sort by creation to identify the 'first' message correctly if needed
         {
             "$group": {
                 "_id": "$conversation_id",
-                "preview": {"$first": "$content"},
+                "title": {"$first": "$title"}, 
+                "preview": {"$last": "$content"}, # Preview last message? Or first? usually last is better for "recent"
                 "updated_at": {"$max": "$updated_at"},
                 "message_count": {"$sum": 1},
             }
@@ -139,13 +147,54 @@ async def list_conversations(
     cursor = db[COLLECTION_PROMPTS].aggregate(pipeline)
     conversations = []
     async for doc in cursor:
+        # Fallback to preview/content if title is missing
+        title = doc.get("title")
+        preview = (doc.get("preview") or "")[:80] + ("..." if len(doc.get("preview") or "") > 80 else "")
+        if not title:
+            title = preview
+
         conversations.append({
             "id": doc["_id"],
-            "preview": (doc.get("preview") or "")[:80] + ("..." if len(doc.get("preview") or "") > 80 else ""),
+            "title": title,
+            "preview": preview,
             "updated_at": doc.get("updated_at"),
             "message_count": doc.get("message_count", 0),
         })
     return conversations
+
+
+@router.patch("/conversations/{conversation_id}")
+async def update_conversation_title(
+    conversation_id: str,
+    update_data: dict,  # Expect {"title": "New Title"}
+    current_user: dict = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Update a conversation's title.
+    Because we store title on Prompt documents, this updates all prompts in the conversation 
+    to ensure consistency for the aggregation pipeline.
+    """
+    new_title = update_data.get("title")
+    if not new_title:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Title is required"
+        )
+        
+    # Update all prompts in this conversation for this user
+    result = await db[COLLECTION_PROMPTS].update_many(
+        {"conversation_id": conversation_id, "user_id": current_user["id"]},
+        {"$set": {"title": new_title}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Conversation not found"
+        )
+        
+    return {"message": "Conversation updated successfully", "updated_count": result.modified_count}
 
 
 @router.get("/{prompt_id}", response_model=PromptResponse)
@@ -173,6 +222,62 @@ async def get_prompt(
     prompt_data = prepare_from_db(prompt, "created_at", "updated_at")
     
     return PromptResponse(**prompt_data)
+
+
+
+@router.delete("/conversations", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_conversations(
+    conversation_ids: List[str],  # Expect list of IDs in body
+    current_user: dict = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Bulk delete conversations.
+    Deletes all prompts associated with the given conversation IDs.
+    """
+    if not conversation_ids:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No conversation IDs provided"
+        )
+
+    result = await db[COLLECTION_PROMPTS].delete_many(
+        {
+            "conversation_id": {"$in": conversation_ids},
+            "user_id": current_user["id"]
+        }
+    )
+    
+    # We return 204 No Content so no body is expected, but if we wanted to return count
+    # we would use 200 OK. Standard for DELETE bulk is often 204 or 200 with count.
+    # Let's keep 204 for simplicity as planned, or 200 if we want to confirm count.
+    # The plan implicits standard delete. 
+    # If using 204, we can't return data.
+    return None
+
+
+@router.delete("/conversations/{conversation_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_conversation(
+    conversation_id: str,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Delete a specific conversation (all its prompts).
+    """
+    result = await db[COLLECTION_PROMPTS].delete_many(
+        {"conversation_id": conversation_id, "user_id": current_user["id"]}
+    )
+    
+    if result.deleted_count == 0:
+        # Check if conversation exists to differentiate 404 vs just empty
+        # But for delete, idempotency is good. If it's gone, it's gone.
+        # However, usually we return 404 if it didn't exist.
+        # Let's return 404 if we want to be strict, or 204 if we want to be idempotent.
+        # Existing delete_prompt returns 404.
+        pass
+        
+    return None
 
 
 @router.delete("/{prompt_id}", status_code=status.HTTP_204_NO_CONTENT)

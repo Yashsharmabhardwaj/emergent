@@ -7,9 +7,11 @@ from typing import Optional
 import uuid
 
 
+
 class PromptBase(BaseModel):
     """Base prompt schema"""
     content: str
+    title: Optional[str] = None
 
 
 class PromptCreate(PromptBase):
@@ -34,6 +36,7 @@ class PromptResponse(BaseModel):
     """Schema for prompt response"""
     id: str
     content: str
+    title: Optional[str] = None
     conversation_id: Optional[str] = None
     phase: Optional[str] = None
     response: Optional[str]
@@ -45,3 +48,4 @@ class PromptUpdate(BaseModel):
     """Schema for updating a prompt"""
     content: Optional[str] = None
     response: Optional[str] = None
+    title: Optional[str] = None
