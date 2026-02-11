@@ -269,7 +269,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100" data-testid="dashboard">
+    <div className="flex h-screen bg-background" data-testid="dashboard">
       {/* Sidebar */}
       <div
         className={`${sidebarOpen ? 'w-80' : 'w-0'
@@ -288,9 +288,9 @@ const Dashboard = () => {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col bg-background">
         {/* Header */}
-        <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shadow-sm">
+        <div className="h-16 bg-card border-b border-border flex items-center justify-between px-6 shadow-sm">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -319,11 +319,7 @@ const Dashboard = () => {
                 <Settings className="h-5 w-5" />
               </Button>
             </Link>
-            <Link to="/history">
-              <Button variant="ghost" size="icon" data-testid="history-btn">
-                <BarChart3 className="h-5 w-5" />
-              </Button>
-            </Link>
+
             <Button variant="ghost" size="icon" onClick={logout} data-testid="logout-btn">
               <LogOut className="h-5 w-5" />
             </Button>
@@ -349,26 +345,26 @@ const Dashboard = () => {
               <div className="text-center max-w-md">
                 <div className="mb-6">
                   <Sparkles className="h-16 w-16 mx-auto text-purple-500 mb-4" />
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
                     Start a New Conversation
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-muted-foreground">
                     Describe your product idea and I'll help you create a comprehensive product plan
                   </p>
                 </div>
                 <div className="grid grid-cols-1 gap-3 text-left">
-                  <div className="p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-300 transition-colors cursor-pointer">
-                    <p className="text-sm text-gray-700">
+                  <div className="p-4 bg-card rounded-lg border border-border hover:border-purple-300 transition-colors cursor-pointer">
+                    <p className="text-sm text-foreground">
                       "Build a food delivery app for tier-2 cities"
                     </p>
                   </div>
-                  <div className="p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-300 transition-colors cursor-pointer">
-                    <p className="text-sm text-gray-700">
+                  <div className="p-4 bg-card rounded-lg border border-border hover:border-purple-300 transition-colors cursor-pointer">
+                    <p className="text-sm text-foreground">
                       "Create a fitness tracking SaaS for gyms"
                     </p>
                   </div>
-                  <div className="p-4 bg-white rounded-lg border border-gray-200 hover:border-purple-300 transition-colors cursor-pointer">
-                    <p className="text-sm text-gray-700">
+                  <div className="p-4 bg-card rounded-lg border border-border hover:border-purple-300 transition-colors cursor-pointer">
+                    <p className="text-sm text-foreground">
                       "Design an AI-powered learning platform"
                     </p>
                   </div>
@@ -393,16 +389,16 @@ const Dashboard = () => {
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
                   <div className="flex-1">
-                    <div className="bg-white rounded-2xl rounded-tl-none p-4 shadow-sm border border-gray-100 max-w-[85%]">
+                    <div className="bg-card rounded-2xl rounded-tl-none p-4 shadow-sm border border-border max-w-[85%]">
                       {/* Skeleton loading lines */}
                       <div className="space-y-2">
-                        <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-shimmer bg-[length:200%_100%]"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-shimmer bg-[length:200%_100%] w-4/5"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-shimmer bg-[length:200%_100%] w-3/4"></div>
-                        <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-full animate-shimmer bg-[length:200%_100%] w-5/6"></div>
+                        <div className="h-4 bg-gradient-to-r from-muted via-muted/50 to-muted rounded-full animate-shimmer bg-[length:200%_100%]"></div>
+                        <div className="h-4 bg-gradient-to-r from-muted via-muted/50 to-muted rounded-full animate-shimmer bg-[length:200%_100%] w-4/5"></div>
+                        <div className="h-4 bg-gradient-to-r from-muted via-muted/50 to-muted rounded-full animate-shimmer bg-[length:200%_100%] w-3/4"></div>
+                        <div className="h-4 bg-gradient-to-r from-muted via-muted/50 to-muted rounded-full animate-shimmer bg-[length:200%_100%] w-5/6"></div>
                       </div>
                       {/* Thinking text below skeleton */}
-                      <div className="flex items-center gap-2 text-gray-500 mt-3">
+                      <div className="flex items-center gap-2 text-muted-foreground mt-3">
                         <Loader2 className="w-3 h-3 animate-spin" />
                         <span className="text-xs">AI is thinking...</span>
                       </div>
@@ -417,7 +413,7 @@ const Dashboard = () => {
         </ScrollArea>
 
         {/* Input Area */}
-        <div className="p-6 bg-white border-t border-gray-200">
+        <div className="p-6 bg-card border-t border-border">
           <div className="max-w-4xl mx-auto">
             <ChatInput
               value={prompt}

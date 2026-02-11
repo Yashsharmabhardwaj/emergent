@@ -43,9 +43,9 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-card border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-4">
           <div className="flex items-center gap-4">
             <Link to="/dashboard">
@@ -54,8 +54,8 @@ const Profile = () => {
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
-              <p className="text-sm text-gray-600">View your account information and activity</p>
+              <h1 className="text-2xl font-bold text-foreground">Profile</h1>
+              <p className="text-sm text-muted-foreground">View your account information and activity</p>
             </div>
           </div>
         </div>
@@ -74,20 +74,20 @@ const Profile = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-1">{user?.username}</h2>
-                  <p className="text-gray-600 mb-4">{user?.email}</p>
+                  <h2 className="text-2xl font-bold text-foreground mb-1">{user?.username}</h2>
+                  <p className="text-muted-foreground mb-4">{user?.email}</p>
                   <div className="flex items-center gap-4">
                     <Badge variant="secondary" className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       Joined{' '}
                       {user?.created_at
                         ? new Date(user.created_at).toLocaleDateString('en-US', {
-                            month: 'short',
-                            year: 'numeric',
-                          })
+                          month: 'short',
+                          year: 'numeric',
+                        })
                         : 'N/A'}
                     </Badge>
-                    <Badge className="bg-gradient-to-br from-blue-500 to-purple-600">
+                    <Badge className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                       Active User
                     </Badge>
                   </div>
@@ -100,17 +100,17 @@ const Profile = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
                   Total Conversations
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <MessageSquare className="h-5 w-5 text-blue-600" />
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-3xl font-bold text-gray-900">
+                    <p className="text-3xl font-bold text-foreground">
                       {stats.total_conversations}
                     </p>
                   </div>
@@ -120,17 +120,17 @@ const Profile = () => {
 
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
                   Total Messages
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <TrendingUp className="h-5 w-5 text-purple-600" />
+                  <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                    <TrendingUp className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <p className="text-3xl font-bold text-gray-900">{stats.total_messages}</p>
+                    <p className="text-3xl font-bold text-foreground">{stats.total_messages}</p>
                   </div>
                 </div>
               </CardContent>
@@ -138,17 +138,17 @@ const Profile = () => {
 
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
                   Active Conversations
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <MessageSquare className="h-5 w-5 text-green-600" />
+                  <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                    <MessageSquare className="h-5 w-5 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <p className="text-3xl font-bold text-gray-900">
+                    <p className="text-3xl font-bold text-foreground">
                       {stats.active_conversations}
                     </p>
                   </div>
@@ -158,15 +158,15 @@ const Profile = () => {
 
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-600">Archived</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">Archived</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gray-100 rounded-lg">
-                    <Archive className="h-5 w-5 text-gray-600" />
+                  <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                    <Archive className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                   </div>
                   <div>
-                    <p className="text-3xl font-bold text-gray-900">
+                    <p className="text-3xl font-bold text-foreground">
                       {stats.archived_conversations}
                     </p>
                   </div>
@@ -187,7 +187,7 @@ const Profile = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">Conversations Progress</span>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-muted-foreground">
                     {stats.total_conversations} conversations
                   </span>
                 </div>
@@ -196,7 +196,7 @@ const Profile = () => {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">Messages Sent</span>
-                  <span className="text-sm text-gray-500">{stats.total_messages} messages</span>
+                  <span className="text-sm text-muted-foreground">{stats.total_messages} messages</span>
                 </div>
                 <Progress value={(stats.total_messages / 500) * 100} className="h-2" />
               </div>
@@ -213,12 +213,6 @@ const Profile = () => {
                 <Button variant="outline" className="w-full justify-start">
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Start New Conversation
-                </Button>
-              </Link>
-              <Link to="/history">
-                <Button variant="outline" className="w-full justify-start">
-                  <Archive className="h-4 w-4 mr-2" />
-                  View Conversation History
                 </Button>
               </Link>
               <Link to="/settings">

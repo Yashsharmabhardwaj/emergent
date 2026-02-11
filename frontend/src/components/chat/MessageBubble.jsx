@@ -27,9 +27,9 @@ const MessageBubble = ({ message, isUser }) => {
 
   const formatTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
@@ -64,12 +64,12 @@ const MessageBubble = ({ message, isUser }) => {
             "rounded-2xl px-4 py-3 shadow-sm",
             isUser
               ? "bg-gradient-to-br from-blue-500 to-purple-600 text-white"
-              : "bg-white border border-gray-200"
+              : "bg-card border border-border"
           )}
         >
           {/* Message Header */}
           <div className="flex items-center gap-2 mb-1">
-            <span className={cn("text-xs font-medium", isUser ? "text-blue-100" : "text-gray-500")}>
+            <span className={cn("text-xs font-medium", isUser ? "text-blue-100" : "text-muted-foreground")}>
               {isUser ? "You" : "AI Assistant"}
             </span>
             {message.phase && !isUser && (
@@ -83,7 +83,7 @@ const MessageBubble = ({ message, isUser }) => {
           <p
             className={cn(
               "text-sm leading-relaxed whitespace-pre-wrap break-words",
-              isUser ? "text-white" : "text-gray-800"
+              isUser ? "text-white" : "text-foreground"
             )}
           >
             {isUser ? message.content : message.response}
@@ -91,7 +91,7 @@ const MessageBubble = ({ message, isUser }) => {
 
           {/* Message Footer */}
           <div className="flex items-center justify-between mt-2">
-            <span className={cn("text-xs", isUser ? "text-blue-100" : "text-gray-400")}>
+            <span className={cn("text-xs", isUser ? "text-blue-100" : "text-muted-foreground")}>
               {formatTime(message.created_at)}
             </span>
 
@@ -102,13 +102,13 @@ const MessageBubble = ({ message, isUser }) => {
               onClick={handleCopy}
               className={cn(
                 "h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity",
-                isUser ? "hover:bg-white/20" : "hover:bg-gray-100"
+                isUser ? "hover:bg-white/20" : "hover:bg-accent"
               )}
             >
               {copied ? (
-                <Check className={cn("h-3 w-3", isUser ? "text-white" : "text-gray-600")} />
+                <Check className={cn("h-3 w-3", isUser ? "text-white" : "text-muted-foreground")} />
               ) : (
-                <Copy className={cn("h-3 w-3", isUser ? "text-white" : "text-gray-600")} />
+                <Copy className={cn("h-3 w-3", isUser ? "text-white" : "text-muted-foreground")} />
               )}
             </Button>
           </div>

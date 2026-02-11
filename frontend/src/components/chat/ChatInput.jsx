@@ -28,7 +28,7 @@ const ChatInput = ({ value, onChange, onSubmit, loading, placeholder }) => {
 
   return (
     <form onSubmit={onSubmit} className="relative">
-      <div className="relative flex items-end gap-2 p-4 bg-white border border-gray-200 rounded-2xl shadow-lg">
+      <div className="relative flex items-end gap-2 p-4 bg-background border border-border rounded-2xl shadow-lg">
         <Textarea
           ref={textareaRef}
           data-testid="chat-input"
@@ -38,12 +38,12 @@ const ChatInput = ({ value, onChange, onSubmit, loading, placeholder }) => {
           placeholder={loading ? "AI is responding..." : (placeholder || "Type your message here... (Press Enter to send, Shift+Enter for new line)")}
           disabled={loading}
           className={cn(
-            "min-h-[50px] max-h-[200px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent",
-            "scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
+            "min-h-[50px] max-h-[200px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent text-foreground placeholder:text-muted-foreground",
+            "scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent"
           )}
           rows={1}
         />
-        
+
         <Button
           type="submit"
           data-testid="send-message-btn"
@@ -63,11 +63,11 @@ const ChatInput = ({ value, onChange, onSubmit, loading, placeholder }) => {
           )}
         </Button>
       </div>
-      
+
       {/* Hint text */}
-      <p className="text-xs text-gray-500 mt-2 px-1">
-        Press <kbd className="px-1.5 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded">Enter</kbd> to send, 
-        <kbd className="px-1.5 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded ml-1">Shift + Enter</kbd> for new line
+      <p className="text-xs text-muted-foreground mt-2 px-1">
+        Press <kbd className="px-1.5 py-0.5 text-xs font-semibold text-foreground bg-muted border border-border rounded">Enter</kbd> to send,
+        <kbd className="px-1.5 py-0.5 text-xs font-semibold text-foreground bg-muted border border-border rounded ml-1">Shift + Enter</kbd> for new line
       </p>
     </form>
   );

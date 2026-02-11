@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Label } from '../components/ui/label';
@@ -15,6 +16,7 @@ const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000
 
 const Settings = () => {
   const { user } = useAuth();
+  const { theme, setTheme } = useTheme();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [settings, setSettings] = useState({
@@ -54,9 +56,9 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-background transition-colors duration-300">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-card border-b border-border transition-colors duration-300">
         <div className="max-w-5xl mx-auto px-6 py-4">
           <div className="flex items-center gap-4">
             <Link to="/dashboard">
@@ -65,8 +67,8 @@ const Settings = () => {
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-              <p className="text-sm text-gray-600">Manage your preferences and account settings</p>
+              <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+              <p className="text-sm text-muted-foreground">Manage your preferences and account settings</p>
             </div>
           </div>
         </div>
@@ -90,11 +92,14 @@ const Settings = () => {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Theme</Label>
-                  <p className="text-sm text-gray-500">Select your preferred theme</p>
+                  <p className="text-sm text-muted-foreground">Select your preferred theme</p>
                 </div>
                 <Select
-                  value={settings.theme}
-                  onValueChange={(value) => setSettings({ ...settings, theme: value })}
+                  value={theme}
+                  onValueChange={(value) => {
+                    setTheme(value);
+                    setSettings({ ...settings, theme: value });
+                  }}
                 >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue />
@@ -134,7 +139,7 @@ const Settings = () => {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Language</Label>
-                  <p className="text-sm text-gray-500">Select your display language</p>
+                  <p className="text-sm text-muted-foreground">Select your display language</p>
                 </div>
                 <Select
                   value={settings.language}
@@ -170,7 +175,7 @@ const Settings = () => {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Enable Notifications</Label>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground">
                     Receive notifications about your conversations
                   </p>
                 </div>
@@ -194,24 +199,24 @@ const Settings = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label className="text-gray-500">Username</Label>
+                <Label className="text-muted-foreground">Username</Label>
                 <p className="text-lg font-medium">{user?.username}</p>
               </div>
               <Separator />
               <div>
-                <Label className="text-gray-500">Email</Label>
+                <Label className="text-muted-foreground">Email</Label>
                 <p className="text-lg font-medium">{user?.email}</p>
               </div>
               <Separator />
               <div>
-                <Label className="text-gray-500">Member Since</Label>
+                <Label className="text-muted-foreground">Member Since</Label>
                 <p className="text-lg font-medium">
                   {user?.created_at
                     ? new Date(user.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })
                     : 'N/A'}
                 </p>
               </div>

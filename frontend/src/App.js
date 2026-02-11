@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { Toaster } from "./components/ui/toaster";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
@@ -63,7 +64,7 @@ function AppContent() {
             <Footer />
           </>
         } />
-        
+
         {/* Auth routes */}
         <Route path="/login" element={
           isAuthenticated ? <Navigate to="/dashboard" /> : <Login />
@@ -71,7 +72,7 @@ function AppContent() {
         <Route path="/register" element={
           isAuthenticated ? <Navigate to="/dashboard" /> : <Register />
         } />
-        
+
         {/* Protected routes */}
         <Route path="/dashboard" element={
           <ProtectedRoute>
@@ -93,7 +94,7 @@ function AppContent() {
             <History />
           </ProtectedRoute>
         } />
-        
+
         {/* 404 Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -106,7 +107,9 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppContent />
+        <ThemeProvider storageKey="vite-ui-theme">
+          <AppContent />
+        </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>
   );

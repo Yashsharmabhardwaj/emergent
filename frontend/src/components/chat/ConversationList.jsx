@@ -111,12 +111,12 @@ const ConversationList = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 border-r border-gray-200">
+    <div className="flex flex-col h-full bg-muted/30 border-r border-border">
 
       {/* Header */}
-      <div className="p-4 border-b border-gray-200 bg-white">
+      <div className="p-4 border-b border-border bg-card">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-foreground">
             Conversations
           </h2>
 
@@ -131,13 +131,13 @@ const ConversationList = ({
         </div>
 
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
             placeholder="Search conversations..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 bg-gray-50 border-gray-200"
+            className="pl-9 bg-background border-border"
           />
         </div>
       </div>
@@ -148,8 +148,8 @@ const ConversationList = ({
 
           {filteredConversations.length === 0 ? (
             <div className="text-center py-8 px-4">
-              <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm text-gray-500">
+              <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">
                 {searchQuery ? 'No conversations found' : 'No conversations yet'}
               </p>
             </div>
@@ -159,9 +159,9 @@ const ConversationList = ({
                 key={conv.id}
                 className={cn(
                   "group relative rounded-lg p-3 cursor-pointer transition-all duration-200",
-                  "hover:bg-white hover:shadow-sm",
+                  "hover:bg-accent hover:shadow-sm",
                   activeConversationId === conv.id
-                    ? "bg-white shadow-sm border border-blue-200"
+                    ? "bg-card shadow-sm border border-primary/20"
                     : "bg-transparent border border-transparent"
                 )}
                 onClick={() => onSelectConversation(conv.id)}
@@ -171,7 +171,7 @@ const ConversationList = ({
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-sm font-medium text-gray-900 truncate">
+                      <h3 className="text-sm font-medium text-foreground truncate">
                         {conv.title || 'Untitled Conversation'}
                       </h3>
 
@@ -182,11 +182,11 @@ const ConversationList = ({
                       )}
                     </div>
 
-                    <p className="text-xs text-gray-500 truncate mb-1">
+                    <p className="text-xs text-muted-foreground truncate mb-1">
                       {conv.preview || 'No preview available'}
                     </p>
 
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <span>{conv.message_count || 0} messages</span>
                       <span>•</span>
                       <span>
@@ -199,7 +199,7 @@ const ConversationList = ({
                   <div onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                        <button className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
                           <MoreVertical className="h-5 w-5" />
                         </button>
                       </DropdownMenuTrigger>
